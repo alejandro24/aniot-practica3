@@ -1,0 +1,9 @@
+menu "MOCK_TEMP Configuration"
+
+    config CONFIG_MEASUREMENT_DELAY
+        int "MEASUREMENT DELAY (s)"
+        default 10
+        help
+            Delay seconds between temperature measurements
+
+endmenu
