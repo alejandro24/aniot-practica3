@@ -18,8 +18,6 @@ esp_timer_handle_t measurement_timer;
 
 uint64_t us_measurement_delay = MEASUREMENT_DELAY * 1000000u;
 
-enum mock_temp_state temp_state = NOT_INITIALIZED;
-
 float curr_temp;
 
 static void measurement_timer_callback(void * args);
@@ -28,7 +26,6 @@ void temp_mock_init(esp_event_loop_handle_t event_loop)
 {
     // Sensor logic goes here.
     loop_connect = event_loop;
-    temp_state = INITIALIZED;
 
     const esp_timer_create_args_t measurement_timer_args = {
         .callback = &measurement_timer_callback,
