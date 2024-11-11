@@ -80,6 +80,9 @@ static void wifi_event_handler(void *handler_args, esp_event_base_t base,
 static void state_event_handler(void * handler_args, esp_event_base_t base,
                                 int32_t event_id, void *event_data)
 {
+
+    size_t remaining_buffer = 0; //It will be used to get the remaining amount to read from the flash memory.
+
     ESP_LOGD(TAG, "Event dispached from event loop base=%s, event_id=%" PRIi32
              "", base, event_id);
     switch ((state_event_id_t)event_id) {
@@ -96,7 +99,6 @@ static void state_event_handler(void * handler_args, esp_event_base_t base,
                                                             wifi_event_handler,
                                                             NULL));
             break;
-
         case STATE_EVENT_CONSOLE:
             /* If we mirror the autoreconnect functionality of wifi on the temp
              * sensor it could save us on manually reconnecting on monitoring*/
@@ -117,10 +119,39 @@ static void state_event_handler(void * handler_args, esp_event_base_t base,
              * so that once the handler gets registered again it should connect
              * automatically, if it doesn't that logic needs to get added */
             wifi_disconnect();
+
+            //Temperature measure is stopped in console mode.
             temp_mock_pause();
-            /* TODO! implement console logic */
-            break;
+
+            //Welcome message to console mode. It will describe what options are available for this mode
+
+            ESP_LOGI("Welcome to Console mode.", "Please use help command for further infortmation.");
+
+            switch(){
+                case HELP:
+                    ESP_LOGI("Three commands are available for this mode: ", "help, monitor, quota");
+                    ESP_LOGI("help command: ", "It will show you the available commands");
+                    ESP_LOGI("monitor command: ","It will exit from console mode and come back to monitoring mode.");
+                    ESP_LOGI("quota command: ", "It will show how many bytes is pending of being reading in the Flash memory.");
             
+                break;
+
+                case MONITOR:
+
+
+                break;
+
+                case QUOTA: 
+                // remaining flash memory content is got and showed to the operator
+                remaining_buffer = getDataLeft();
+
+                ESP_LOGI("the remaining dat to read from flash memory is:%u", remaining_buffer);
+                
+                break;
+            }
+            
+            /* TODO! implement console logic */
+            break;            
 }
 
 void app_main(void)
